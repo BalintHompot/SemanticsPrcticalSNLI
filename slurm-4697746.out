@@ -1,6 +1,0 @@
-ERROR: Unable to locate a modulefile for 'eb'
-Traceback (most recent call last):
-  File "trainMain.py", line 3, in <module>
-srun: error: r31n5: task 0: Exited with exit code 1
-    import torch
-ModuleNotFoundError: No module named 'torch'

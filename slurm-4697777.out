@@ -1,9 +1,0 @@
-ERROR: Unable to locate a modulefile for 'eb'
-ERROR: Unable to locate a modulefile for 'Python/3.6.3-foss-2017b'
-ERROR: Unable to locate a modulefile for 'cuDNN/7.0.5-CUDA-9.0.176'
-ERROR: Unable to locate a modulefile for 'NCCL/2.0.5-CUDA-9.0.176'
-Traceback (most recent call last):
-  File "trainMain.py", line 3, in <module>
-srun: error: r31n5: task 0: Exited with exit code 1
-    import torch
-ImportError: No module named 'torch'
