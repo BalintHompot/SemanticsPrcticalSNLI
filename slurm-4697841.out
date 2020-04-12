@@ -1,0 +1,5 @@
+Traceback (most recent call last):
+  File "trainMain.py", line 3, in <module>
+    import torch
+ModuleNotFoundError: No module named 'torch'
+srun: error: r30n1: task 0: Exited with exit code 1
