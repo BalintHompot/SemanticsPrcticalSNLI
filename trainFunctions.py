@@ -26,7 +26,7 @@ def trainModel(model, data, optimizer, lr_threshold, lr_decrease_factor, plottin
         accuracies = {"ticks":[], "values":[], "seriesName": "train accuracy"}
         accuracies_val = {"ticks":[], "values":[], "seriesName": "validation accuracy"}
     
-    last_epoch_val_acc = -9000
+    last_epoch_val_acc = 0.4 ### if after the first epoch we are not better then 0.4 we should immediately decrease
     epoch = 0
     while lr_is_bigger(optimizer, lr_threshold):
         avg_acc = 0
@@ -67,7 +67,7 @@ def trainModel(model, data, optimizer, lr_threshold, lr_decrease_factor, plottin
                 accuracies_val["ticks"].append(epoch)
                 accuracies_val["values"].append(val_acc)
             ## decreasing the learning rate when worse performance
-            if val_acc < last_epoch_val_acc:
+            if val_acc <= last_epoch_val_acc:
                 print("decreasing lr")
                 for g in optimizer.param_groups:
                     g['lr'] /= lr_decrease_factor

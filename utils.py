@@ -6,7 +6,7 @@ DEVICE = "cuda"
 
 def get_data():
     # set up fields
-    TEXT = data.Field(lower=True, include_lengths=True, batch_first=True)
+    TEXT = data.Field(lower=True, include_lengths=True, batch_first=True, tokenize='spacy')
     LABEL = data.Field(sequential=False)
 
     # make splits for data
