@@ -26,7 +26,7 @@ default_params = {
     "lr_decrease_factor":5,
     "lr_stopping" : 1e-5,
     "layer_num" : 1,
-    "layer_size" : 1000,
+    "layer_size" : 500,
     "lr" : 0.001,
 }
 
@@ -36,7 +36,7 @@ param_ranges = {
     "lr_decrease_factors":[3, 5],
     "lr_stoppings": [1e-5, 1e-6], 
     "layer nums":[1,2],
-    "layer sizes":[1000],
+    "layer sizes":[500,1000,2000],
 }
 ######################################################
 
