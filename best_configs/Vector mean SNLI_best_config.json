@@ -1,7 +1,0 @@
-{
- "learning rate": 0.001,
- "lr_stopping": 1e-06,
- "lr_decrease_factor": 3,
- "number of layers": 1,
- "number of neurons per layer": 1
-}

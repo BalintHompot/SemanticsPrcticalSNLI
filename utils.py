@@ -2,8 +2,6 @@ from torchtext import data, datasets
 from torchtext.vocab import GloVe
 import numpy as np
 
-DEVICE = "cuda"
-
 def get_data():
     # set up fields
     TEXT = data.Field(lower=True, include_lengths=True, batch_first=True, tokenize='spacy')
@@ -23,7 +21,7 @@ def get_data():
     # make iterator for splits
     print("Loading data into iterables")
     train_iter, val_iter, test_iter = data.BucketIterator.splits(
-        (train,val, test), batch_size=300, device=DEVICE)
+        (train,val, test), batch_size=300, device="cuda")
     print("done, returning data")
     ### text contains metadata, returning it
     return train_iter, val_iter, test_iter, TEXT

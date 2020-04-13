@@ -8,7 +8,6 @@ import numpy as np
 from torchtext import data
 from torchtext import datasets
 import logging
-from embeddings import HBMP
 
 
 PATH_SENTEVAL = ''
@@ -58,17 +57,19 @@ logging.basicConfig(format='%(asctime)s : %(message)s', level=logging.DEBUG)
 def runSentEval(model, originalTEXTfield):
 
     params_senteval[model.name] = torch.load(model)
-    params_senteval['inputs'] = data.Field(lower=True, tokenize='spacy')
+    params_senteval['textField'] = originalTEXTfield
 
     se = senteval.engine.SE(params_senteval, batcher, prepare)
 
+    transfer_tasks = ['CR', 'MR']
     # define transfer tasks
+    '''
     transfer_tasks = ['CR', 'MR', 'MPQA', 'SUBJ', 'SST2', 'SST5', 'TREC', 'MRPC',
                       'SICKEntailment', 'SICKRelatedness', 'STSBenchmark', 'ImageCaptionRetrieval',
                       'STS12', 'STS13', 'STS14', 'STS15', 'STS16',
                       'Length', 'WordContent', 'Depth', 'TopConstituents','BigramShift', 'Tense',
                       'SubjNumber', 'ObjNumber', 'OddManOut', 'CoordinationInversion']
-
+    '''
     #['MR', 'CR', 'SUBJ', 'MPQA', 'STSBenchmark', 'SST2', 'SST5', 'TREC', 'MRPC', 
     #'SICKRelatedness', 'SICKEntailment', 'STS14']
 
