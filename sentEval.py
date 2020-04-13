@@ -12,36 +12,21 @@ import logging
 
 PATH_SENTEVAL = ''
 PATH_TO_DATA = 'data'
-PATH_TO_GLOVE = 'glove/glove.840B.300d.txt'
-MODEL_PATH = 'HBMP.model'
 
-assert os.path.isfile(MODEL_PATH) and os.path.isfile(PATH_TO_GLOVE), \
-    'Set MODEL and GloVe PATHs'
 
 
 sys.path.insert(0, PATH_SENTEVAL)
 import senteval
 
-
 def prepare(params, samples):
-    params.inputs.build_vocab(samples)
-    params.inputs.vocab.load_vectors('glove.840B.300d')
-    params.hbmp.word_embedding.weight.data = params.inputs.vocab.vectors
+    train = data.Dataset(samples, params.textField)
+    senteval_iter = data.BucketIterator.splits(
+        (train), batch_size=300, device="cuda")
+    return senteval_iter
 
 def batcher(params, batch):
-    sentences = []
-    for s in batch:
-      sentence = params.inputs.preprocess(s)
-      sentences.append(sentence)
-    sentences = params.inputs.process(sentences, train=True, device=0)
-    params.hbmp = params.hbmp.cuda()
-    emb = params.hbmp.forward(sentences.cuda())
-    embeddings = []
-    for sent in emb:
-      sent = sent.cpu()
-      embeddings.append(sent.data.cpu().numpy())
-    embeddings = np.vstack(embeddings)
-    return embeddings
+
+    return params.model(batch)
 
 
 # params_senteval = {'task_path': PATH_TO_DATA, 'usepytorch': True, 'kfold': 5, 'seed':1234}
@@ -56,7 +41,7 @@ logging.basicConfig(format='%(asctime)s : %(message)s', level=logging.DEBUG)
 
 def runSentEval(model, originalTEXTfield):
 
-    params_senteval[model.name] = torch.load(model)
+    params_senteval["model"] = model
     params_senteval['textField'] = originalTEXTfield
 
     se = senteval.engine.SE(params_senteval, batcher, prepare)
