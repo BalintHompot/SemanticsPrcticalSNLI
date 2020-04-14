@@ -3,3 +3,4 @@ __pycache__/
 .vector_cache/
 SentEval/
 best_models/
+textfield_stored

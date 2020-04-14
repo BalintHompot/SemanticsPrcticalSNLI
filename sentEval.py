@@ -1,4 +1,3 @@
-
 from __future__ import absolute_import, division, unicode_literals
 
 import sys
@@ -8,25 +7,32 @@ import numpy as np
 from torchtext import data
 from torchtext import datasets
 import logging
-
+from utils import get_data
+import pickle as pkl
+import json
 
 PATH_SENTEVAL = ''
-PATH_TO_DATA = 'data'
-
-
+PATH_TO_DATA = 'SentEval/data'
 
 sys.path.insert(0, PATH_SENTEVAL)
 import senteval
 
-def prepare(params, samples):
-    train = data.Dataset(samples, params.textField)
-    senteval_iter = data.BucketIterator.splits(
-        (train), batch_size=300, device="cuda")
-    return senteval_iter
 
 def batcher(params, batch):
-
-    return params.model(batch)
+    sentences = []
+    for s in batch:
+        if s == []:
+            s = ["-"]
+        sentence = params.inputs.preprocess(s)
+        sentences.append(sentence)
+    sentences = params.inputs.process(sentences, device = "cuda")
+    emb = params.model.forward(sentences)
+    embeddings = []
+    for sent in emb:
+      sent = sent.cpu()
+      embeddings.append(sent.data.cpu().numpy())
+    embeddings = np.vstack(embeddings)
+    return embeddings
 
 
 # params_senteval = {'task_path': PATH_TO_DATA, 'usepytorch': True, 'kfold': 5, 'seed':1234}
@@ -39,24 +45,31 @@ params_senteval['classifier'] = {'nhid': 0, 'optim': 'adam', 'batch_size': 64,
 
 logging.basicConfig(format='%(asctime)s : %(message)s', level=logging.DEBUG)
 
-def runSentEval(model, originalTEXTfield):
+def runSentEval(model, textfield, tasks = "all"):
 
-    params_senteval["model"] = model
-    params_senteval['textField'] = originalTEXTfield
+    params_senteval['model'] = model.encoder
+    params_senteval['inputs'] = textfield
 
-    se = senteval.engine.SE(params_senteval, batcher, prepare)
+    se = senteval.engine.SE(params_senteval, batcher)
 
-    transfer_tasks = ['CR', 'MR']
     # define transfer tasks
-    '''
-    transfer_tasks = ['CR', 'MR', 'MPQA', 'SUBJ', 'SST2', 'SST5', 'TREC', 'MRPC',
-                      'SICKEntailment', 'SICKRelatedness', 'STSBenchmark', 'ImageCaptionRetrieval',
-                      'STS12', 'STS13', 'STS14', 'STS15', 'STS16',
-                      'Length', 'WordContent', 'Depth', 'TopConstituents','BigramShift', 'Tense',
-                      'SubjNumber', 'ObjNumber', 'OddManOut', 'CoordinationInversion']
-    '''
+    if tasks == "all":
+        transfer_tasks = ['CR', 'MR', 'MPQA', 'SUBJ', 'SST2', 'SST5', 'TREC', 'MRPC',
+                        'SICKEntailment', 'SICKRelatedness', 'STSBenchmark', 'ImageCaptionRetrieval',
+                        'STS12', 'STS13', 'STS14', 'STS15', 'STS16',
+                        'Length', 'WordContent', 'Depth', 'TopConstituents','BigramShift', 'Tense',
+                        'SubjNumber', 'ObjNumber', 'OddManOut', 'CoordinationInversion']
+    else:
+        transfer_tasks = tasks
+
     #['MR', 'CR', 'SUBJ', 'MPQA', 'STSBenchmark', 'SST2', 'SST5', 'TREC', 'MRPC', 
     #'SICKRelatedness', 'SICKEntailment', 'STS14']
 
     results = se.eval(transfer_tasks)
-    print(results)
+
+    with open("./best_model_results/"+model.name+"_SentEval_results.json", "w+") as writer:
+        json.dump(results, writer, indent=1)
+
+model = pkl.load(open("best_models/LSTM SNLI.model", "rb"))
+textfield = pkl.load(open("textfield_stored", "rb"))
+runSentEval(model, textfield)
