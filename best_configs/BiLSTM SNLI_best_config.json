@@ -3,5 +3,5 @@
  "lr_stopping": 1e-05,
  "lr_decrease_factor": 5,
  "number of layers": 2,
- "number of neurons per layer": 1000
+ "number of neurons per layer": 500
 }

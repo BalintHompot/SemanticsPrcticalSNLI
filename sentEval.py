@@ -62,7 +62,7 @@ def runSentEval(model, textfield, tasks = "all"):
                         'SubjNumber', 'ObjNumber', 'OddManOut', 'CoordinationInversion']
     elif tasks == "paper":
         ## run tasks reported in the paper
-        transfer_tasks = ['MR', 'CR', 'SUBJ', 'MPQA', 'STSBenchmark', 'SST2', 'SST5', 'TREC', 'MRPC', 'SICKRelatedness', 'SICKEntailment', 'STS14']
+        transfer_tasks = ['MR', 'CR', 'MPQA', 'SUBJ', 'SST2', 'TREC','MRPC', 'SICKEntailment', 'STS14']
     else:
         ## you can pass a list as arg
         transfer_tasks = tasks
@@ -70,4 +70,4 @@ def runSentEval(model, textfield, tasks = "all"):
     results = se.eval(transfer_tasks)
 
     with open("./best_model_results/"+model.name+"_SentEval_results.json", "w+") as writer:
-        json.dump(results, writer, indent=1)
+        json.dump(results, writer, indent=1, default=lambda o: '<not serializable>')
