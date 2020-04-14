@@ -4,3 +4,4 @@ tqdm
 matplotlib
 torchtext
 spacy
+sklearn

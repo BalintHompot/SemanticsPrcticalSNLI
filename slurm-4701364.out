@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "trainMain.py", line 9, in <module>
+    from sentEval import runSentEval
+  File "/home/lgpu0015/SemanticsPrcticalSNLI/sentEval.py", line 18, in <module>
+    import senteval
+  File "/home/lgpu0015/.local/lib/python3.6/site-packages/SentEval-0.1.0-py3.6.egg/senteval/__init__.py", line 10, in <module>
+  File "/home/lgpu0015/.local/lib/python3.6/site-packages/SentEval-0.1.0-py3.6.egg/senteval/engine.py", line 16, in <module>
+  File "/home/lgpu0015/.local/lib/python3.6/site-packages/SentEval-0.1.0-py3.6.egg/senteval/binary.py", line 18, in <module>
+  File "/home/lgpu0015/.local/lib/python3.6/site-packages/SentEval-0.1.0-py3.6.egg/senteval/tools/validation.py", line 21, in <module>
+ModuleNotFoundError: No module named 'sklearn'
+srun: error: r31n5: task 0: Exited with exit code 1
