@@ -54,22 +54,20 @@ def runSentEval(model, textfield, tasks = "all"):
 
     # define transfer tasks
     if tasks == "all":
+        ## run all available tasks
         transfer_tasks = ['CR', 'MR', 'MPQA', 'SUBJ', 'SST2', 'SST5', 'TREC', 'MRPC',
                         'SICKEntailment', 'SICKRelatedness', 'STSBenchmark', 'ImageCaptionRetrieval',
                         'STS12', 'STS13', 'STS14', 'STS15', 'STS16',
                         'Length', 'WordContent', 'Depth', 'TopConstituents','BigramShift', 'Tense',
                         'SubjNumber', 'ObjNumber', 'OddManOut', 'CoordinationInversion']
+    elif tasks == "paper":
+        ## run tasks reported in the paper
+        transfer_tasks = ['MR', 'CR', 'SUBJ', 'MPQA', 'STSBenchmark', 'SST2', 'SST5', 'TREC', 'MRPC', 'SICKRelatedness', 'SICKEntailment', 'STS14']
     else:
+        ## you can pass a list as arg
         transfer_tasks = tasks
-
-    #['MR', 'CR', 'SUBJ', 'MPQA', 'STSBenchmark', 'SST2', 'SST5', 'TREC', 'MRPC', 
-    #'SICKRelatedness', 'SICKEntailment', 'STS14']
 
     results = se.eval(transfer_tasks)
 
     with open("./best_model_results/"+model.name+"_SentEval_results.json", "w+") as writer:
         json.dump(results, writer, indent=1)
-
-model = pkl.load(open("best_models/LSTM SNLI.model", "rb"))
-textfield = pkl.load(open("textfield_stored", "rb"))
-runSentEval(model, textfield)

@@ -103,7 +103,7 @@ def testModel(model, data, scorePlotting = True):
         test_batch_count += 1
     test_acc /= test_batch_count
     results = {"test accuracy: ": test_acc}
-
+    print("test accuracy: "+str(test_acc))
     return results
 
 def save_model_and_res(model, results):
@@ -115,15 +115,26 @@ def save_model_and_res(model, results):
     filehandler.close()
     
 
-def construct_and_train_model_with_config(encoderClass, data, config, metadata):
+def construct_and_train_model_with_config(encoderClass, data, config, metadata, forceRetrain = False):
 
     encoder = encoderClass(metadata, config["number of neurons per layer"], config["number of layers"])
     model = SNLIModel(encoder)
     optimizer = torch.optim.Adam(model.parameters(), lr=config["learning rate"])
 
-    print("++++++++++++++++++++++++++ Training model " + model.name + " with best params +++++++++++++++++++++++++++++++")
+    model_save_path = "./best_models/" + model.name + ".model"
+    if os.path.exists(model_save_path) and not forceRetrain:
+        print("-----------------")
+        print("best model already stored and force retrain is false")
+        print("retrieving model")
+        print("-----------------")
+        filehandler = open(model_save_path, "rb")
+        trained_model = pkl.load(filehandler)
+        filehandler.close()
+    else:
 
-    trained_model, train_results = trainModel(model, data, optimizer,  config["lr_stopping"], config["lr_decrease_factor"], plotting = False)
+        print("++++++++++++++++++++++++++ Training model " + model.name + " with best params +++++++++++++++++++++++++++++++")
+
+        trained_model, train_results = trainModel(model, data, optimizer,  config["lr_stopping"], config["lr_decrease_factor"], plotting = False)
     return trained_model
 
 

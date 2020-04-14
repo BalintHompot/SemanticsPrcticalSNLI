@@ -6,7 +6,7 @@ from tqdm import tqdm
 from encoders import *
 from trainFunctions import *
 from utils import *
-
+from sentEval import runSentEval
 
 train_data, val_data, test_data, TEXT = get_data()
 data = {"train":train_data, "val": val_data, "test": test_data}
@@ -50,5 +50,7 @@ for encoderClass in [MeanEncoder,LSTMEncoder,BiLSTMEncoder, MaxBiLSTMEncoder]:
     best_model_results = testModel(best_model, data)
     # saving best model and results
     save_model_and_res(best_model, best_model_results)
+    # running SentEval for the model
+    runSentEval(best_model, TEXT, tasks="paper")
 
 
