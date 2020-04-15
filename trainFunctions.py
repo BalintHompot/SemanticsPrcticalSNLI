@@ -71,6 +71,9 @@ def trainModel(model, data, optimizer, lr_threshold, lr_decrease_factor, plottin
                 print("decreasing lr")
                 for g in optimizer.param_groups:
                     g['lr'] /= lr_decrease_factor
+            else:
+                for g in optimizer.param_groups:
+                    g['lr'] *= 0.99
             last_epoch_val_acc = val_acc
             print("-------------- validation average acc: " + str(val_acc))
         epoch += 1
@@ -93,7 +96,17 @@ def savePlot(dataSeries, modelName):
 
 def testModel(model, data, scorePlotting = True):
     print('+++++++++++++++++++++++++++++++++++++++++++++')
-    print('Final performance of ' + model.name + ' with optimal params on test partition.')
+    print('Final performance of ' + model.name + ' with optimal params on test partition (and dev for comparison).')
+    
+    val_acc = 0
+    val_batch_count = 0
+    for batch_val in iter(data["val"]):
+        model.eval()
+        validation_out = model(batch_val.premise, batch_val.hypothesis)
+        val_acc += accuracy(validation_out, batch_val.label - 1)
+        val_batch_count += 1
+    val_acc /= val_batch_count
+
     test_acc = 0
     test_batch_count = 0
     for batch_test in iter(data["test"]):
@@ -102,7 +115,9 @@ def testModel(model, data, scorePlotting = True):
         test_acc += accuracy(test_out, batch_test.label - 1)
         test_batch_count += 1
     test_acc /= test_batch_count
-    results = {"test accuracy: ": test_acc}
+    results = {
+        "dev accuracy" : val_acc,
+        "test accuracy: ": test_acc}
     print("test accuracy: "+str(test_acc))
     return results
 

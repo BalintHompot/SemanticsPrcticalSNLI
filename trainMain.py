@@ -24,9 +24,9 @@ metadata = {
 
 default_params = {
     "lr_decrease_factor":5,
-    "lr_stopping" : 1e-5,
+    "lr_stopping" : 1e-6,
     "layer_num" : 1,
-    "layer_size" : 500,
+    "layer_size" : 512,
     "lr" : 0.001,
 }
 
@@ -36,16 +36,16 @@ param_ranges = {
     "lr_decrease_factors":[3, 5],
     "lr_stoppings": [1e-5, 1e-6], 
     "layer nums":[1,2],
-    "layer sizes":[500,1000,2000],
+    "layer sizes":[512,1024],
 }
 ######################################################
 
 print("--------- Fitting models and testing on set-aside data ------------")
-for encoderClass in [LSTMEncoder,BiLSTMEncoder, MaxBiLSTMEncoder]:
+for encoderClass in [MeanEncoder,LSTMEncoder,BiLSTMEncoder, MaxBiLSTMEncoder]:
     # searching for best params
     best_params_for_model = paramSweep(encoderClass, data, default_params, param_ranges, metadata)
     # training model with best params (and saving training plots)
-    best_model = construct_and_train_model_with_config(encoderClass, data, best_params_for_model, metadata)
+    best_model = construct_and_train_model_with_config(encoderClass, data, best_params_for_model, metadata, forceRetrain=True)
     # testing the best model
     best_model_results = testModel(best_model, data)
     # saving best model and results
