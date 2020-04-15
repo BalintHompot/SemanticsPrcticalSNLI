@@ -94,7 +94,7 @@ def savePlot(dataSeries, modelName):
     plt.savefig("./plots/" + modelName + "_training.png")
 
 
-def testModel(model, data, scorePlotting = True):
+def testModel(model, data):
     print('+++++++++++++++++++++++++++++++++++++++++++++')
     print('Final performance of ' + model.name + ' with optimal params on test partition (and dev for comparison).')
     
