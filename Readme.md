@@ -1,9 +1,9 @@
 # Pretraining language models on SNLI
 This repository contains code for pre-training and evaluating 4 different language models pre-trained on the SNLI (inference) task. The inference is performed by a shallow linear classifier that works on the output of one of the 4 encoder models:
 * The baseline emcoder averages the word vectors of a sentence
-        * A unidiractional LSTM encoder
-        * A bidirectional LSTM encoder
-        * A bidirectional LSTM encoder with max pooling
+* A unidiractional LSTM encoder
+* A bidirectional LSTM encoder
+* A bidirectional LSTM encoder with max pooling
 
 
 ## Pre-requisits
@@ -20,9 +20,9 @@ Contains data loading and accuracy calculation script
 ### trainFunctions.py
 This file contains the functions that are called when performing the pretraining:
 * paramsweep
-        * A unidiractional LSTM encoder
-        * A bidirectional LSTM encoder
-        * A bidirectional LSTM encoder with max pooling
+* A unidiractional LSTM encoder
+* A bidirectional LSTM encoder
+* A bidirectional LSTM encoder with max pooling
 
 ##Usage
 
