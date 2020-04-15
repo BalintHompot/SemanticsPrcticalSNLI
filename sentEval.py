@@ -45,7 +45,7 @@ params_senteval['classifier'] = {'nhid': 0, 'optim': 'adam', 'batch_size': 64,
 
 logging.basicConfig(format='%(asctime)s : %(message)s', level=logging.DEBUG)
 
-def runSentEval(model, textfield, tasks = "all"):
+def runSentEval(model, textfield, tasks = "all", runName = "best"):
 
     params_senteval['model'] = model.encoder
     params_senteval['inputs'] = textfield
@@ -69,5 +69,5 @@ def runSentEval(model, textfield, tasks = "all"):
 
     results = se.eval(transfer_tasks)
 
-    with open("./best_model_results/"+model.name+"_SentEval_results.json", "w+") as writer:
+    with open("./"+ runName + "_model_results/"+model.name+"_SentEval_results.json", "w+") as writer:
         json.dump(results, writer, indent=1, default=lambda o: '<not serializable>')

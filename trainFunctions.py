@@ -121,22 +121,25 @@ def testModel(model, data):
     print("test accuracy: "+str(test_acc))
     return results
 
-def save_model_and_res(model, results):
-    with open("./best_model_results/"+model.name+"_best_config_results.json", "w+") as writer:
+def save_model_and_res(model, results, runName = "best"):
+    if not os.path.exists("./" + runName + "_model_results"):
+        os.mkdir("./" + runName + "_model_results")
+    with open("./" + runName + "_model_results/" + model.name + "_best_config_results.json", "w+") as writer:
         json.dump(results, writer, indent=1)
-
-    filehandler = open("./best_models/" + model.name + ".model", 'wb') 
+    if not os.path.exists("./" + runName + "_models"):
+        os.mkdir("./" + runName + "_models")
+    filehandler = open("./" + runName + "_models/" + model.name + ".model", 'wb') 
     pkl.dump(model, filehandler)
     filehandler.close()
     
 
-def construct_and_train_model_with_config(encoderClass, data, config, metadata, forceRetrain = False):
+def construct_and_train_model_with_config(encoderClass, data, config, metadata, forceRetrain = False, runName = "best"):
 
     encoder = encoderClass(metadata, config["number of neurons per layer"], config["number of layers"])
     model = SNLIModel(encoder)
     optimizer = torch.optim.Adam(model.parameters(), lr=config["learning rate"])
 
-    model_save_path = "./best_models/" + model.name + ".model"
+    model_save_path = "./"+ runName + "_models/" + model.name + ".model"
     if os.path.exists(model_save_path) and not forceRetrain:
         print("-----------------")
         print("best model already stored and force retrain is false")
@@ -154,13 +157,13 @@ def construct_and_train_model_with_config(encoderClass, data, config, metadata, 
 
 
 
-def paramSweep(encoderClass, data, default_config, param_ranges, metadata, forceOptimize = False):
+def paramSweep(encoderClass, data, default_config, param_ranges, metadata, forceOptimize = False, runName = "best"):
     '''
     '''
 
     #retrieve the previously optimised model config
     model_name = encoderClass(metadata, 1,1).name + " SNLI"
-    save_file = "./best_configs/" + model_name + "_best_config.json"
+    save_file = "./"+ runName +"_configs/" + model_name + "_best_config.json"
     if os.path.exists(save_file) and not forceOptimize:
         print(f"{model_name} optimized parameters already exists, retrieving")
         with open(save_file, "r") as f:
@@ -278,7 +281,9 @@ def paramSweep(encoderClass, data, default_config, param_ranges, metadata, force
         best_config["number of layers"] = 1
         best_config["number of neurons per layer"] = 1
 
-    with open("./best_configs/" + model_name + "_best_config.json", "w+") as writer:
+    if not os.path.exists("./" + runName+ "_configs"):
+        os.mkdir("./" + runName+ "_configs")
+    with open("./" + runName+ "_configs/" + model_name + "_best_config.json", "w+") as writer:
         json.dump(best_config, writer, indent=1)
 
     return best_config
