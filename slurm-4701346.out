@@ -1,7 +1,0 @@
-Traceback (most recent call last):
-  File "trainMain.py", line 9, in <module>
-    from sentEval import runSentEval
-  File "/home/lgpu0015/SemanticsPrcticalSNLI/sentEval.py", line 18, in <module>
-    import senteval
-ModuleNotFoundError: No module named 'senteval'
-srun: error: r31n5: task 0: Exited with exit code 1

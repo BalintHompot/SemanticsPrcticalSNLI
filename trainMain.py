@@ -41,11 +41,11 @@ param_ranges = {
 ######################################################
 
 print("--------- Fitting models and testing on set-aside data ------------")
-for encoderClass in [MeanEncoder,LSTMEncoder,BiLSTMEncoder, MaxBiLSTMEncoder]:
+for encoderClass in [ MaxBiLSTMEncoder]:
     # searching for best params
     best_params_for_model = paramSweep(encoderClass, data, default_params, param_ranges, metadata)
     # training model with best params (and saving training plots)
-    best_model = construct_and_train_model_with_config(encoderClass, data, best_params_for_model, metadata, forceRetrain=True)
+    best_model = construct_and_train_model_with_config(encoderClass, data, best_params_for_model, metadata)
     # testing the best model
     best_model_results = testModel(best_model, data)
     # saving best model and results
