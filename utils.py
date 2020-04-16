@@ -68,6 +68,3 @@ def printResults(encoderNames, resultType, runName = "best"):
             headersSet = True
 
     print(tabulate(tabs, headers=headers, tablefmt='orgtbl'))
-
-
-printResults(["Vector mean", "LSTM", "BiLSTM", "Pooled BiLSTM"], resultType = "SentEval")
