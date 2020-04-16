@@ -11,6 +11,7 @@ class EncoderModel(nn.Module):
         self.dropout = 0.5
         self.embedding = nn.Embedding(params["vocab_size"], params["vector_size"], padding_idx= params["pad_idx"]).from_pretrained(params["pretrained"])
     
+
     def processPadded(self, textTuple):
         text, text_lens = textTuple
         self.lens = text_lens

@@ -1,6 +1,8 @@
 from torchtext import data, datasets
 from torchtext.vocab import GloVe
 import numpy as np
+from tabulate import tabulate
+from json import load
 
 def get_data():
     # set up fields
@@ -34,3 +36,38 @@ def accuracy(output, target):
     correct = np.sum(output == target)
     return correct/len(target)
     
+def printResults(encoderNames, resultType, runName = "best"):
+    tabs = []
+    headers = ["Model"]
+    headersSet = False
+    for encoder in encoderNames:
+        if resultType == "SNLI":
+            with open("./" + runName + "_model_results/" + encoder + " SNLI_best_config_results.json", "rb") as filehandler:
+                enc_res = load(filehandler)
+            filehandler.close()
+            enc_tab_res = [encoder, enc_res["dev accuracy"], enc_res["test accuracy: "]]
+        elif resultType == "SentEval":
+            with open("./" + runName + "_model_results/" + encoder + " SNLI_SentEval_results.json", "rb") as filehandler:
+                enc_res = load(filehandler)
+            filehandler.close()
+            enc_tab_res = [encoder]
+            for task in enc_res.keys():
+                if task == "MRPC":
+                    enc_tab_res.append(str(enc_res[task]["acc"]) + "/" + str(enc_res[task]["f1"]))
+                elif task == "STS14":
+                    enc_tab_res.append(str(round(enc_res[task]["all"]["pearson"]["mean"], 2)) + "/" + str(round(enc_res[task]["all"]["spearman"]["mean"], 2)))
+                else:
+                    enc_tab_res.append(enc_res[task]["acc"])
+
+        else:
+            print("not a valid result type (SNLI|SentEval)")
+            return
+        tabs.append(enc_tab_res)
+        if not headersSet:
+            headers.extend(list(enc_res.keys()))
+            headersSet = True
+
+    print(tabulate(tabs, headers=headers, tablefmt='orgtbl'))
+
+
+printResults(["Vector mean", "LSTM", "BiLSTM", "Pooled BiLSTM"], resultType = "SentEval")
