@@ -1,0 +1,4 @@
+Accessing raw input and preprocessing
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+slurmstepd: error: *** JOB 4712135 ON r30n1 CANCELLED AT 2020-04-16T11:16:09 ***
+slurmstepd: error: *** STEP 4712135.0 ON r30n1 CANCELLED AT 2020-04-16T11:16:09 ***
