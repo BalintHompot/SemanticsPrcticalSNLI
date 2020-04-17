@@ -8,7 +8,7 @@ from trainFunctions import *
 from utils import *
 from sentEval import runSentEval
 
-train_data, val_data, test_data, TEXT = get_data()
+train_data, val_data, test_data, TEXT, LABEL = get_data()
 data = {"train":train_data, "val": val_data, "test": test_data}
 
 print("Data loaded, starting train")
@@ -41,7 +41,7 @@ param_ranges = {
 ######################################################
 
 print("--------- Fitting models and testing on set-aside data ------------")
-for encoderClass in [ LSTMEncoder, BiLSTMEncoder, MaxBiLSTMEncoder]:
+for encoderClass in [MeanEncoder, LSTMEncoder, BiLSTMEncoder, MaxBiLSTMEncoder]:
     # searching for best params
     best_params_for_model = paramSweep(encoderClass, data, default_params, param_ranges, metadata)
     # training model with best params (and saving training plots)

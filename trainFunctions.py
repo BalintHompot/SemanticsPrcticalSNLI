@@ -288,3 +288,30 @@ def paramSweep(encoderClass, data, default_config, param_ranges, metadata, force
 
     return best_config
 
+def testExample(modelName, textField = None, labelField = None, runName = "best"):
+    
+    textField = pkl.load(open("./textfield_stored", "rb"))
+    
+    if not textField or not labelField:
+        from utils import get_data
+        a,b,c, textField, labelField = get_data()
+
+    filehandler = open("./" + runName + "_models/" + modelName + " SNLI.model", 'rb') 
+    model = pkl.load(filehandler)
+    filehandler.close()
+
+    while True:
+        prem = input("Type a premise (x to exit): ")
+        if prem == "x":
+            return
+        hyp = input("Type a hypothesis (x to exit): ")
+        if hyp == "x":
+            return
+        preprocessed_prem, preprocessed_hyp = textField.preprocess(prem), textField.preprocess(hyp)
+        processed_prem, processed_hyp = textField.process([preprocessed_prem], device = "cuda"), textField.process([preprocessed_hyp], device = "cuda")
+        out = model(processed_prem, processed_hyp)
+
+        max_pos = torch.argmax(out) + 1
+        verdict = labelField.vocab.itos[max_pos]
+        print("Verdict is: " + verdict)
+

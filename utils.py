@@ -26,7 +26,7 @@ def get_data():
         (train,val, test), batch_size=64, device="cuda")
     print("done, returning data")
     ### text contains metadata, returning it
-    return train_iter, val_iter, test_iter, TEXT
+    return train_iter, val_iter, test_iter, TEXT, LABEL
 
 
 
@@ -40,17 +40,26 @@ def printResults(encoderNames, resultType, runName = "best"):
     tabs = []
     headers = ["Model"]
     headersSet = False
+    micro = 0
+    microCount = 0
+    macro = 0
+    macroCount = 0
     for encoder in encoderNames:
-        if resultType == "SNLI":
+        enc_tab_res = [encoder]
+        if resultType == "SNLI" or resultType == "SNLI+transfer":
             with open("./" + runName + "_model_results/" + encoder + " SNLI_best_config_results.json", "rb") as filehandler:
                 enc_res = load(filehandler)
             filehandler.close()
-            enc_tab_res = [encoder, enc_res["dev accuracy"], enc_res["test accuracy: "]]
-        elif resultType == "SentEval":
+            enc_tab_res.extend([enc_res["dev accuracy"]*100, enc_res["test accuracy: "]*100])
+            if not headersSet:
+                headers.extend(list(enc_res.keys()))
+                headersSet = True
+
+        if resultType == "SentEval" or resultType == "SNLI+transfer":
             with open("./" + runName + "_model_results/" + encoder + " SNLI_SentEval_results.json", "rb") as filehandler:
                 enc_res = load(filehandler)
             filehandler.close()
-            enc_tab_res = [encoder]
+            
             for task in enc_res.keys():
                 if task == "MRPC":
                     enc_tab_res.append(str(enc_res[task]["acc"]) + "/" + str(enc_res[task]["f1"]))
@@ -58,13 +67,22 @@ def printResults(encoderNames, resultType, runName = "best"):
                     enc_tab_res.append(str(round(enc_res[task]["all"]["pearson"]["mean"], 2)) + "/" + str(round(enc_res[task]["all"]["spearman"]["mean"], 2)))
                 else:
                     enc_tab_res.append(enc_res[task]["acc"])
+                    macro += enc_res[task]["acc"]
+                    macroCount += 1
+                    micro += enc_res[task]["acc"] * enc_res[task]["ntest"]
+                    microCount += enc_res[task]["ntest"]
+            if not headersSet:
+                headers.extend(list(enc_res.keys()))
+                headersSet = True
+        
+        if resultType == "SNLI+transfer":
+            enc_tab_res = enc_tab_res[0:3]
+            enc_tab_res.extend([macro / macroCount, micro/microCount])
 
-        else:
-            print("not a valid result type (SNLI|SentEval)")
-            return
         tabs.append(enc_tab_res)
-        if not headersSet:
-            headers.extend(list(enc_res.keys()))
-            headersSet = True
+
+    if resultType == "SNLI+transfer":
+        headers.extend(["transfer macro", "transfer micro"])
 
     print(tabulate(tabs, headers=headers, tablefmt='orgtbl'))
+
