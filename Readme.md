@@ -14,6 +14,8 @@ Note: the SentEval package has to be in the root directory of this project
 
 The models are not included in the github repository nor in the archive as they are too large. They can be downloaded from [this drive](https://drive.google.com/drive/folders/1I5Mj2E7MUxBeyYA-mjkpHKqAxtRHc2dc?usp=sharing). The drive contains the full "runs" folder with all the runs,  models included, in case you want to use them, just replace the "runs" folder here with the one on the drive.
 
+This project is available at [this repository](https://github.com/BalintHompot/SemanticsPrcticalSNLI).
+
 ## Usage
 The main entry point of the project is trainMain which calls the separate functions from trainFunctions and performs the whole task end-to-end from parameter sweeping through model trainig and storing to SentEval results. When called, the full task is performed with the arguments coded into the script, however it can be customized and the train functions can be called separately (e.g. sweeping can be skipped to directly train a model).
 
