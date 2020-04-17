@@ -137,7 +137,7 @@ def construct_and_train_model_with_config(encoderClass, data, config, metadata, 
 
     encoder = encoderClass(metadata, config["number of neurons per layer"], config["number of layers"])
     model = SNLIModel(encoder)
-    optimizer = torch.optim.SGD(model.parameters(), lr=config["learning rate"])
+    optimizer = torch.optim.Adam(model.parameters(), lr=config["learning rate"])
 
     model_save_path = "./"+ runName + "_models/" + model.name + ".model"
     if os.path.exists(model_save_path) and not forceRetrain:
@@ -189,7 +189,7 @@ def paramSweep(encoderClass, data, default_config, param_ranges, metadata, force
         for lr in learning_rates:
             encoder = encoderClass(metadata, default_config["layer_size"], default_config["layer_num"])
             model = SNLIModel(encoder)
-            optimizer = torch.optim.SGD(model.parameters(), lr=lr)
+            optimizer = torch.optim.Adam(model.parameters(), lr=lr)
             current_model, current_acc = trainModel(model, data, optimizer, default_config["lr_stopping"], default_config["lr_decrease_factor"])
             if(current_acc > best_acc):
                 best_acc = current_acc
@@ -207,7 +207,7 @@ def paramSweep(encoderClass, data, default_config, param_ranges, metadata, force
         for lr_stopping in lr_stoppings:
             encoder = encoderClass(metadata, default_config["layer_size"], default_config["layer_num"])
             model = SNLIModel(encoder)
-            optimizer = torch.optim.SGD(model.parameters(), lr=default_config["lr"])
+            optimizer = torch.optim.Adam(model.parameters(), lr=default_config["lr"])
             current_model, current_acc = trainModel(model, data, optimizer, lr_stopping, default_config["lr_decrease_factor"])
             if(current_acc > best_acc):
                 best_acc = current_acc
@@ -225,7 +225,7 @@ def paramSweep(encoderClass, data, default_config, param_ranges, metadata, force
         for lr_decrease_factor in lr_decrease_factors:
             encoder = encoderClass(metadata, default_config["layer_size"], default_config["layer_num"])
             model = SNLIModel(encoder)
-            optimizer = torch.optim.SGD(model.parameters(), lr=default_config["lr"])
+            optimizer = torch.optim.Adam(model.parameters(), lr=default_config["lr"])
             current_model, current_acc = trainModel(model, data, optimizer, default_config["lr_stopping"], lr_decrease_factor)
             if(current_acc > best_acc):
                 best_acc = current_acc
@@ -247,7 +247,7 @@ def paramSweep(encoderClass, data, default_config, param_ranges, metadata, force
             for layer_num in layer_nums:
                 encoder = encoderClass(metadata, default_config["layer_size"],layer_num)
                 model = SNLIModel(encoder)
-                optimizer = torch.optim.SGD(model.parameters(), lr=default_config["lr"])
+                optimizer = torch.optim.Adam(model.parameters(), lr=default_config["lr"])
                 current_model, current_acc = trainModel(model, data, optimizer, default_config["lr_stopping"], default_config["lr_decrease_factor"])
                 if(current_acc > best_acc):
                     best_acc = current_acc
@@ -265,7 +265,7 @@ def paramSweep(encoderClass, data, default_config, param_ranges, metadata, force
             for layer_neuron in layer_neurons:
                 encoder = encoderClass(metadata, layer_neuron,default_config["layer_num"])
                 model = SNLIModel(encoder)
-                optimizer = torch.optim.SGD(model.parameters(), lr=default_config["lr"])
+                optimizer = torch.optim.Adam(model.parameters(), lr=default_config["lr"])
                 current_model, current_acc = trainModel(model, data, optimizer, default_config["lr_stopping"], default_config["lr_decrease_factor"])
                 if(current_acc > best_acc):
                     best_acc = current_acc
