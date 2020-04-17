@@ -13,6 +13,10 @@ class SNLIModel(nn.Module):
     def forward(self, premise, hypothesis):
         u = self.encoder(premise)
         v = self.encoder(hypothesis)
-
-        inp = torch.cat((u, v, torch.abs(u-v), u*v), dim = 1)
+        ### check if batch or single example
+        if len(u.shape) == 1:
+            cat_dim = 0
+        else:
+            cat_dim = 1
+        inp = torch.cat((u, v, torch.abs(u-v), u*v), dim = cat_dim)
         return self.FC(inp)

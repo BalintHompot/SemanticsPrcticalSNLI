@@ -47,7 +47,7 @@ def printResults(encoderNames, resultType, runName = "best"):
     for encoder in encoderNames:
         enc_tab_res = [encoder]
         if resultType == "SNLI" or resultType == "SNLI+transfer":
-            with open("./" + runName + "_model_results/" + encoder + " SNLI_best_config_results.json", "rb") as filehandler:
+            with open("./runs/" + runName + "/" + runName + "_model_results/" + encoder + " SNLI_best_config_results.json", "rb") as filehandler:
                 enc_res = load(filehandler)
             filehandler.close()
             enc_tab_res.extend([enc_res["dev accuracy"]*100, enc_res["test accuracy: "]*100])
@@ -56,7 +56,7 @@ def printResults(encoderNames, resultType, runName = "best"):
                 headersSet = True
 
         if resultType == "SentEval" or resultType == "SNLI+transfer":
-            with open("./" + runName + "_model_results/" + encoder + " SNLI_SentEval_results.json", "rb") as filehandler:
+            with open("./runs/" + runName + "/" + runName + "_model_results/" + encoder + " SNLI_SentEval_results.json", "rb") as filehandler:
                 enc_res = load(filehandler)
             filehandler.close()
             

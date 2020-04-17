@@ -122,13 +122,16 @@ def testModel(model, data):
     return results
 
 def save_model_and_res(model, results, runName = "best"):
-    if not os.path.exists("./" + runName + "_model_results"):
-        os.mkdir("./" + runName + "_model_results")
-    with open("./" + runName + "_model_results/" + model.name + "_best_config_results.json", "w+") as writer:
+
+    if not os.path.exists("./runs/" + runName):
+        os.mkdir("./runs/" + runName)
+    if not os.path.exists("./runs/" + runName + "/" + runName + "_model_results"):
+        os.mkdir("./runs/" + runName + "/" + runName + "_model_results")
+    with open("./runs/" + runName + "/" + runName + "_model_results/" + model.name + "_best_config_results.json", "w+") as writer:
         json.dump(results, writer, indent=1)
-    if not os.path.exists("./" + runName + "_models"):
-        os.mkdir("./" + runName + "_models")
-    filehandler = open("./" + runName + "_models/" + model.name + ".model", 'wb') 
+    if not os.path.exists("./runs/" + runName + "/" + runName + "_models"):
+        os.mkdir("./runs/" + runName + "/" + runName + "_models")
+    filehandler = open("./runs/" + runName + "/" + runName + "_models/" + model.name + ".model", 'wb') 
     pkl.dump(model, filehandler)
     filehandler.close()
     
@@ -139,7 +142,7 @@ def construct_and_train_model_with_config(encoderClass, data, config, metadata, 
     model = SNLIModel(encoder)
     optimizer = torch.optim.Adam(model.parameters(), lr=config["learning rate"])
 
-    model_save_path = "./"+ runName + "_models/" + model.name + ".model"
+    model_save_path = "./runs/" + runName + "/" + runName + "_models/" + model.name + ".model"
     if os.path.exists(model_save_path) and not forceRetrain:
         print("-----------------")
         print("best model already stored and force retrain is false")
@@ -163,7 +166,7 @@ def paramSweep(encoderClass, data, default_config, param_ranges, metadata, force
 
     #retrieve the previously optimised model config
     model_name = encoderClass(metadata, 1,1).name + " SNLI"
-    save_file = "./"+ runName +"_configs/" + model_name + "_best_config.json"
+    save_file = "./runs/" + runName + "/" + runName +"_configs/" + model_name + "_best_config.json"
     if os.path.exists(save_file) and not forceOptimize:
         print(f"{model_name} optimized parameters already exists, retrieving")
         with open(save_file, "r") as f:
@@ -281,9 +284,12 @@ def paramSweep(encoderClass, data, default_config, param_ranges, metadata, force
         best_config["number of layers"] = 1
         best_config["number of neurons per layer"] = 1
 
-    if not os.path.exists("./" + runName+ "_configs"):
-        os.mkdir("./" + runName+ "_configs")
-    with open("./" + runName+ "_configs/" + model_name + "_best_config.json", "w+") as writer:
+    if not os.path.exists("./runs/" + runName):
+        os.mkdir("./runs/" + runName)
+
+    if not os.path.exists("./runs/" + runName + "/" + runName+ "_configs"):
+        os.mkdir("./runs/" + runName + "/" + runName+ "_configs")
+    with open("./runs/" + runName + "/" + runName+ "_configs/" + model_name + "_best_config.json", "w+") as writer:
         json.dump(best_config, writer, indent=1)
 
     return best_config
@@ -296,7 +302,7 @@ def testExample(modelName, textField = None, labelField = None, runName = "best"
         from utils import get_data
         a,b,c, textField, labelField = get_data()
 
-    filehandler = open("./" + runName + "_models/" + modelName + " SNLI.model", 'rb') 
+    filehandler = open("./runs/" + runName + "/" + runName + "_models/" + modelName + " SNLI.model", 'rb') 
     model = pkl.load(filehandler)
     filehandler.close()
 

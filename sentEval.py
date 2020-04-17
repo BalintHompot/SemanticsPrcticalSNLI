@@ -69,5 +69,5 @@ def runSentEval(model, textfield, tasks = "all", runName = "best"):
 
     results = se.eval(transfer_tasks)
 
-    with open("./"+ runName + "_model_results/"+model.name+"_SentEval_results.json", "w+") as writer:
+    with open("./runs/" + runName + "/" + runName + "_model_results/"+model.name+"_SentEval_results.json", "w+") as writer:
         json.dump(results, writer, indent=1, default=lambda o: '<not serializable>')

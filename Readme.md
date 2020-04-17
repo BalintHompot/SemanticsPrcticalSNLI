@@ -10,7 +10,14 @@ This repository contains code for pre-training and evaluating 4 different langua
 The reuired packages can be installed using the requirements.txt. Besides that, the SentEval package has to be installed for evaluation. For that, follow the installation and download guide in https://github.com/facebookresearch/SentEval.
 Note: the SentEval package has to be in the root directory of this project
 
-## Files and folders
+## Usage
+The usage can be easily understood by taking a look at the trainMain.py or the example notebook. \
+To easily perform the full pipeline one can directly call the trainMain.py. See above what trainMain performs when called. \
+
+The easiest way to change which encoders are investigated, what parameter ranges are used for sweeping, and what are the default parameters is to edit this script at the corresponding sections. The easiest way to construct a model with custom parameters is to define a config file and use it at constructions. Examples can be found in the example notebook.
+
+
+## Documentation
 ### trainMain.py
 This is the main function of the project which calls or imports the rest. In this, we import the data, define a set of default encoder parameters and ranges for the parameters to be optimized. Then for each encoder class the code will:
 * Run parameter sweeping and store the best parameters (this is skipped if best params are found, and sweep is not forced)
@@ -23,7 +30,13 @@ Contains the classes of the 4 encoder models and their parent class
 ### model.py
 Contains the SNLI predictor class. It takes an encoder as an argument and uses it as it's encoder, extending it with the shallow classifier
 ### utils.py
-Contains data loading and accuracy calculation script
+Contains data loading and accuracy calculation script as well as the results printing function which can be called separately:
+**printResults**:
+* input:
+    * encoderNames: list of encoder names to be included in the table
+    * resultType: the results to be included, SNLI for dev and test, SentEval, or SNLI+transfer, the latter contains micro and macro avg of senteval tasks
+    * runName: the name of the run for which results are printed
+* output: None, only printing
 ### trainFunctions.py
 This file contains the model training functions that are called when performing the pretraining. The most important ones that are directly called:
 **paramSweep**
@@ -70,29 +83,31 @@ Stores the model and the results in the corresponding folders (folders are hard 
     * results: a dict with the results
     * runName: string, the name of the run. The script creates folders _models and _model_results  with this prefix to store the outputs. Defaults to "best"
 * output: none
+**testExample**
+Prompts the user to give premises and hypotheses (in a loop). For each pair, prints the model's verdict on entailment
+* input:
+    * modelName: string, the model's name to be tested
+    * texField: torchtext Field that contains the preprocessing. If nothing givem, the code creates automatically
+    * labelField: torchtext Field that contains the mapping from output index to verdict. If nothing givem, the code creates automatically.
+    * runName: the name of the run from which the model is loaded
+* output: None, only printing
 
 ### sentEval.py
 Contains the code for running the sentEval benchmark. The function runSentEval can be called with passing a model, a torchtext Field that contains the text preprocessing pipeline (this is normally obtained when getting the data with utils), and optionally a list of tests that will be performed. This defaults to 'all' which runs all tests, but the string 'paper' can also be passed which performs the tasks reported in [the Conneau et al paper](https://arxiv.org/pdf/1705.02364.pdf). The runName can be passed similarly to the other functions to store the output.
 
 ### example.ipynb
-This is a jupyter notebook to present the usage and results of the project. It follows trainMain closely with some added examples on how to customize the pipeline.
+This is a jupyter notebook to present the usage and results of the project. It follows trainMain closely with some added examples on how to customize the pipeline. It also contains the analysis of results
 
-### best_configs
-Folder containing the jsons with the best configs found for the encoders
+### runName_configs
+Folder containing the jsons with the configs for the encoders in the given run. If sweeping is performed, the output is stored here
 
-### best_models
-Trained models with the different encoders using pickle serialization
+### runName_models
+Trained models with the different encoders of the run using pickle serialization
 
-### best_model_results
-Contains two json per encoder: one is the SNLI dev and test accuracy, the other is the SentEval results
+### runName_model_results
+Contains two json per encoder for a run: one is the SNLI dev and test accuracy, the other is the SentEval results
 
 ### logs
 slurm output of the runs on the Lisa cluster
 
-## Usage
-The usage can be easily understood by taking a look at the trainMain.py or the example notebook. \
-To easily perform the full pipeline one can directly call the trainMain.py. See above what trainMain performs when called. \
-
-
-The easiest way to change which encoders are investigated, what parameter ranges are used for sweeping, and what are the default parameters is to edit this script at the corresponding sections. The easiest way to construct a model with custom parameters is to define a config file and use it at constructions. Examples can be found in the example notebook.
 
