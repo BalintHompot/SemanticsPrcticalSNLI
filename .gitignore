@@ -4,3 +4,4 @@ __pycache__/
 SentEval/
 best_models/
 textfield_stored
+sgd_models/
