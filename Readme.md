@@ -11,13 +11,18 @@ The reuired packages can be installed using the requirements.txt. Besides that, 
 Note: the SentEval package has to be in the root directory of this project
 
 ## Usage
-The usage can be easily understood by taking a look at the trainMain.py or the example notebook. \
-To easily perform the full pipeline one can directly call the trainMain.py. See above what trainMain performs when called. \
+The main entry point of the project is trainMain which calls the separate functions from trainFunctions and performs the whole task end-to-end from parameter sweeping through model trainig and storing to SentEval results. When called, the full task is performed with the arguments coded into the script, however it can be customized and the train functions can be called separately (e.g. sweeping can be skipped to directly train a model).
 
-The easiest way to change which encoders are investigated, what parameter ranges are used for sweeping, and what are the default parameters is to edit this script at the corresponding sections. The easiest way to construct a model with custom parameters is to define a config file and use it at constructions. Examples can be found in the example notebook.
+For customization, the easiest way to change which encoders are investigated, what parameter ranges are used for sweeping, and what are the default parameters is to edit this main script at the corresponding sections. The easiest way to construct a model with custom parameters is to define a config file and use it at constructions.
 
+The examples.ipynb closely follows the trainMain to show how the separate functions of the project can be used. It also gives easy to use examples to show how customization can be done. It also contains the analysis of the project results. I recommend to start at this file and the usage will quickly become clear.
+
+Note: the usage of the project is centered around "run"-s. The user can pass runName to the functions that involve storing, loading or checking for files: the outputs will be stored in the corresponding directory (created automatically), loaded from there, and the functions will check in those directories if there are already stored params/models for the run with the given name. In all functions this runName defaults to "best" (the idea is that the sweeping is performed so we are storing the best).
+
+For further information on the files and functions, see the documentation below.
 
 ## Documentation
+The scripts and folders in the project's root directory are listed here.
 ### trainMain.py
 This is the main function of the project which calls or imports the rest. In this, we import the data, define a set of default encoder parameters and ranges for the parameters to be optimized. Then for each encoder class the code will:
 * Run parameter sweeping and store the best parameters (this is skipped if best params are found, and sweep is not forced)
@@ -40,7 +45,8 @@ Contains data loading and accuracy calculation script as well as the results pri
 ### trainFunctions.py
 This file contains the model training functions that are called when performing the pretraining. The most important ones that are directly called:
 **paramSweep**
-Runs parameter sweeping and stores the best ones in the corresponding folder
+Runs parameter sweeping and stores the best ones in the corresponding folder.
+Note: the parameters are searched one by one while leaving the rest at default. This is to reduce search time, although in principle it does not neccessarily give the best parameter setting as they are not properly searched on a grid.
 * input: 
     * encoderClass: an encoder class (not an instance)
     * data: the data as imported using the utils
@@ -98,15 +104,15 @@ Contains the code for running the sentEval benchmark. The function runSentEval c
 ### example.ipynb
 This is a jupyter notebook to present the usage and results of the project. It follows trainMain closely with some added examples on how to customize the pipeline. It also contains the analysis of results
 
-### runName_configs
-Folder containing the jsons with the configs for the encoders in the given run. If sweeping is performed, the output is stored here
+### trainMain.job
+The job file that was submitted to the Lisa cluster
 
-### runName_models
-Trained models with the different encoders of the run using pickle serialization
+### requirements.txt
+The packages needed to run the project
 
-### runName_model_results
-Contains two json per encoder for a run: one is the SNLI dev and test accuracy, the other is the SentEval results
-
+### runs
+The user can give names to runs when performing the functions. For each run, a directory will be placed under the the runs directory with the given name. The new directory will contain 3 subdirectories: runName_configs with the used configs (either created by user or found during sweeping), runName_models with the trained models for each encoder, and runName_model_results with the SNLI and SentEval results for each encoder.
+Currently there are two run outputs: the "best" was done with the reported params in the paper with Adam and appropriately changed lr, the "sgd" is the same but with SGD optimizer and lr changed back.
 ### logs
 slurm output of the runs on the Lisa cluster
 
