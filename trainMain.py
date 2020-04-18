@@ -43,7 +43,7 @@ param_ranges = {
 runName = "batch300"
 
 print("--------- Fitting models and testing on set-aside data ------------")
-for encoderClass in [MeanEncoder, LSTMEncoder, BiLSTMEncoder, MaxBiLSTMEncoder]:
+for encoderClass in [LSTMEncoder, BiLSTMEncoder, MaxBiLSTMEncoder]:
     # searching for best params
     best_params_for_model = paramSweep(encoderClass, data, default_params, param_ranges, metadata, runName=runName)
     # training model with best params (and saving training plots)

@@ -7,3 +7,6 @@ SentEval/
 best_models/
 textfield_stored
 sgd_models/
+runs/best/best_models/
+runs/sgd/sgd_models/
+runs/batch300/batch300_models/
