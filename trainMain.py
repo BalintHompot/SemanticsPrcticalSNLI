@@ -40,19 +40,18 @@ param_ranges = {
 }
 ######################################################
 
-runName = "batch300"
 
 print("--------- Fitting models and testing on set-aside data ------------")
-for encoderClass in [LSTMEncoder, BiLSTMEncoder, MaxBiLSTMEncoder]:
+for encoderClass in [MeanEncoder,LSTMEncoder, BiLSTMEncoder, MaxBiLSTMEncoder]:
     # searching for best params
-    best_params_for_model = paramSweep(encoderClass, data, default_params, param_ranges, metadata, runName=runName)
+    best_params_for_model = paramSweep(encoderClass, data, default_params, param_ranges, metadata)
     # training model with best params (and saving training plots)
-    best_model = construct_and_train_model_with_config(encoderClass, data, best_params_for_model, metadata, runName=runName)
+    best_model = construct_and_train_model_with_config(encoderClass, data, best_params_for_model, metadata)
     # testing the best model
     best_model_results = testModel(best_model, data)
     # saving best model and results
-    save_model_and_res(best_model, best_model_results, runName=runName)
+    save_model_and_res(best_model, best_model_results)
     # running SentEval for the model
-    runSentEval(best_model, TEXT, tasks="paper", runName=runName)
+    runSentEval(best_model, TEXT, tasks="paper")
 
 

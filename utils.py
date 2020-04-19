@@ -23,7 +23,7 @@ def get_data():
     # make iterator for splits
     print("Loading data into iterables")
     train_iter, val_iter, test_iter = data.BucketIterator.splits(
-        (train,val, test), batch_size=300, device="cuda")
+        (train,val, test), batch_size=64, device="cuda")
     print("done, returning data")
     ### text contains metadata, returning it
     return train_iter, val_iter, test_iter, TEXT, LABEL
